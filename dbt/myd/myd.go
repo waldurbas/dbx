@@ -19,7 +19,7 @@ package myd
 import (
 	"github.com/waldurbas/dbx"
 
-	// mysqlDriver #
+	// mysql #
 	_ "github.com/go-sql-driver/mysql"
 )
 
