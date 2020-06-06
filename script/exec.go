@@ -33,7 +33,7 @@ type VersInfo struct {
 // DbScript #
 type DbScript struct {
 	Vinfo         VersInfo
-	ExecCmd       func(a int, ix int, cmd string) error
+	ExecCmd       func(a int, ix int, cmd string) (bool, error)
 	ExistTable    func(sName string) bool
 	ExistTableCol func(sName string) bool
 	ExistIndex    func(sName string) bool
@@ -218,9 +218,12 @@ func (db *DbScript) Execute(px *Parser) (int, error) {
 		if ok {
 			for i := 0; i < len(tk.Cmds); i++ {
 				sq := tk.GetData(i)
-				err := db.ExecCmd(a, i, sq)
+				end, err := db.ExecCmd(a, i, sq)
 				if err != nil {
 					return a, err
+				}
+				if end {
+					break
 				}
 			}
 		}
