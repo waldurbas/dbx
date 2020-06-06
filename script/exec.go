@@ -42,8 +42,8 @@ type DbScript struct {
 	SaveVers      func(v int) error
 }
 
-// New #
-func New() *DbScript {
+// NewScript #
+func NewScript() *DbScript {
 	return &DbScript{Vinfo: VersInfo{App: "none", Hide: true}}
 }
 
