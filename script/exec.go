@@ -11,7 +11,7 @@ package script
 // ----------------------------------------------------------------------------------
 // HISTORY
 // ----------------------------------------------------------------------------------
-// 2020.06.06 VersInfo
+// 2020.06.06 New,VersInfo
 // 2020.05.24 init
 // ----------------------------------------------------------------------------------
 
@@ -42,8 +42,13 @@ type DbScript struct {
 	SaveVers      func(v int) error
 }
 
-// LoadScript #
-func LoadScript(fileName string) (*Parser, error) {
+// New #
+func New() *DbScript {
+	return &DbScript{Vinfo: VersInfo{App: "none", Hide: true}}
+}
+
+// LoadFile #
+func (db *DbScript) LoadFile(fileName string) (*Parser, error) {
 
 	px := NewParser()
 
@@ -56,15 +61,11 @@ func LoadScript(fileName string) (*Parser, error) {
 }
 
 // Execute #
-func (db *DbScript) Execute(fileName string) (int, error) {
+func (db *DbScript) Execute(px *Parser) (int, error) {
 	ndbu := 0
 	nupd := 0
 	xdbu := 0
 	a := 0
-	px, err := LoadScript(fileName)
-	if err != nil {
-		return a, err
-	}
 
 	for _, tk := range px.Token {
 		ok := false
