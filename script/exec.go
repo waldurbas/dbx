@@ -48,7 +48,7 @@ func NewScript() *DbScript {
 }
 
 // LoadFile #
-func (db *DbScript) LoadFile(fileName string) (*Parser, error) {
+func (dbs *DbScript) LoadFile(fileName string) (*Parser, error) {
 
 	px := NewParser()
 
@@ -61,7 +61,7 @@ func (db *DbScript) LoadFile(fileName string) (*Parser, error) {
 }
 
 // Execute #
-func (db *DbScript) Execute(px *Parser) (int, error) {
+func (dbs *DbScript) Execute(px *Parser) (int, error) {
 	ndbu := 0
 	nupd := 0
 	xdbu := 0
@@ -78,7 +78,7 @@ func (db *DbScript) Execute(px *Parser) (int, error) {
 				return a, errors.New("Parser.App: bad operator")
 			}
 
-			if val != db.Vinfo.App {
+			if val != dbs.Vinfo.App {
 				return a, errors.New("Parser.App: wrong database")
 			}
 			continue
@@ -95,13 +95,13 @@ func (db *DbScript) Execute(px *Parser) (int, error) {
 			nupd, _ = strconv.Atoi(ss[1])
 			xdbu = ndbu*100 + nupd
 
-			if xdbu > db.Vinfo.Dbu {
-				err := db.SaveVers(xdbu)
+			if xdbu > dbs.Vinfo.Dbu {
+				err := dbs.SaveVers(xdbu)
 				if err != nil {
 					return a, err
 				}
-				db.Vinfo.Dbu = xdbu
-			} else if xdbu < db.Vinfo.Dbu {
+				dbs.Vinfo.Dbu = xdbu
+			} else if xdbu < dbs.Vinfo.Dbu {
 				return a, errors.New("Parser.LastDbu: bad value")
 			}
 			continue
@@ -118,21 +118,21 @@ func (db *DbScript) Execute(px *Parser) (int, error) {
 			xdbu = ndbu*100 + nupd
 			switch op {
 			case TkEQ:
-				ok = db.Vinfo.Dbu == xdbu
+				ok = dbs.Vinfo.Dbu == xdbu
 			case TkGT:
-				ok = (db.Vinfo.Dbu/100 == ndbu) && (db.Vinfo.Dbu%100 == nupd-1)
+				ok = (dbs.Vinfo.Dbu/100 == ndbu) && (dbs.Vinfo.Dbu%100 == nupd-1)
 				if !ok {
-					ok = (db.Vinfo.Dbu/100 == ndbu-1) && (nupd == 0)
+					ok = (dbs.Vinfo.Dbu/100 == ndbu-1) && (nupd == 0)
 				}
 			case TkGE:
-				ok = db.Vinfo.Dbu == xdbu
+				ok = dbs.Vinfo.Dbu == xdbu
 
 				if !ok {
-					ok = (db.Vinfo.Dbu/100 == ndbu) && (db.Vinfo.Dbu%100 == nupd-1)
+					ok = (dbs.Vinfo.Dbu/100 == ndbu) && (dbs.Vinfo.Dbu%100 == nupd-1)
 				}
 
 				if !ok {
-					ok = (db.Vinfo.Dbu/100 == ndbu-1) && (nupd == 0)
+					ok = (dbs.Vinfo.Dbu/100 == ndbu-1) && (nupd == 0)
 				}
 			}
 
@@ -143,16 +143,16 @@ func (db *DbScript) Execute(px *Parser) (int, error) {
 			continue
 
 		case TkShow:
-			db.Vinfo.Show = true
+			dbs.Vinfo.Show = true
 			continue
 		case TkNoShow:
-			db.Vinfo.Show = false
+			dbs.Vinfo.Show = false
 			continue
 		case TkHide:
-			db.Vinfo.Hide = true
+			dbs.Vinfo.Hide = true
 			continue
 		case TkNoHide:
-			db.Vinfo.Hide = false
+			dbs.Vinfo.Hide = false
 			continue
 
 		// IF
@@ -165,16 +165,16 @@ func (db *DbScript) Execute(px *Parser) (int, error) {
 				case TkTable:
 					ss := strings.Split(val, ".")
 					if len(ss) == 2 {
-						ok = db.ExistTableCol(val)
+						ok = dbs.ExistTableCol(val)
 					} else {
-						ok = db.ExistTable(val)
+						ok = dbs.ExistTable(val)
 					}
 				case TkIndex:
-					ok = db.ExistIndex(val)
+					ok = dbs.ExistIndex(val)
 				case TkFunction:
-					ok = db.ExistFunc(val)
+					ok = dbs.ExistFunc(val)
 				case TkProcedure:
-					ok = db.ExistProc(val)
+					ok = dbs.ExistProc(val)
 				default:
 					return a, errors.New("Parser.IF: bad object")
 				}
@@ -193,16 +193,16 @@ func (db *DbScript) Execute(px *Parser) (int, error) {
 			case TkTable:
 				ss := strings.Split(val, ".")
 				if len(ss) == 2 {
-					ok = db.ExistTableCol(val)
+					ok = dbs.ExistTableCol(val)
 				} else {
-					ok = db.ExistTable(val)
+					ok = dbs.ExistTable(val)
 				}
 			case TkIndex:
-				ok = db.ExistIndex(val)
+				ok = dbs.ExistIndex(val)
 			case TkFunction:
-				ok = db.ExistFunc(val)
+				ok = dbs.ExistFunc(val)
 			case TkProcedure:
-				ok = db.ExistProc(val)
+				ok = dbs.ExistProc(val)
 			default:
 				return a, errors.New("Parser.IF: bad object")
 			}
@@ -218,7 +218,7 @@ func (db *DbScript) Execute(px *Parser) (int, error) {
 		if ok {
 			for i := 0; i < len(tk.Cmds); i++ {
 				sq := tk.GetData(i)
-				end, err := db.ExecCmd(a, i, sq)
+				end, err := dbs.ExecCmd(a, i, sq)
 				if err != nil {
 					return a, err
 				}
@@ -230,12 +230,12 @@ func (db *DbScript) Execute(px *Parser) (int, error) {
 		a++
 	}
 
-	if xdbu > db.Vinfo.Dbu {
-		err := db.SaveVers(xdbu)
+	if xdbu > dbs.Vinfo.Dbu {
+		err := dbs.SaveVers(xdbu)
 		if err != nil {
 			return a, err
 		}
-		db.Vinfo.Dbu = xdbu
+		dbs.Vinfo.Dbu = xdbu
 	}
 
 	return a, nil

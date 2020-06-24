@@ -9,5 +9,6 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/waldurbas/firebirdsql v1.0.0
+	github.com/waldurbas/mysql v1.5.1
 	gitlab.com/nyarla/go-crypt v0.0.0-20160106005555-d9a5dc2b789b // indirect
 )

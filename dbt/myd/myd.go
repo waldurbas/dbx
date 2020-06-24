@@ -11,6 +11,7 @@ package myd
 // ----------------------------------------------------------------------------------
 // HISTORY
 // ----------------------------------------------------------------------------------
+// 2020.06.24 zurück zu eigener Version (fork) meine Änderung ist wieder weg
 // 2020.05.26 meine Änderung 2020.02.22 @Wald.Urbas for strings (x.length >> 2)
 //            wurde vom github.com/go-sql-driver/mysql übernommen
 //            switch to "github.com/go-sql-driver/mysql"
@@ -20,7 +21,7 @@ import (
 	"github.com/waldurbas/dbx"
 
 	// mysql #
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/waldurbas/mysql"
 )
 
 // NewDatabase #new instance

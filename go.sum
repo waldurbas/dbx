@@ -10,5 +10,7 @@ github.com/shopspring/decimal v1.2.0 h1:abSATXmQEYyShuxI4/vyW3tV1MrKAJzCZ/0zLUXY
 github.com/shopspring/decimal v1.2.0/go.mod h1:DKyhrW/HYNuLGql+MJL6WCR6knT2jwCFRcu2hWCYk4o=
 github.com/waldurbas/firebirdsql v1.0.0 h1:+iot2y6jE/McRivEKWUSmMk9pgstGMU4gbHGlxGufl4=
 github.com/waldurbas/firebirdsql v1.0.0/go.mod h1:woOEwsUmuNh9FhxFbDvIREYQ4cehX+PekKLxRzSfkqE=
+github.com/waldurbas/mysql v1.5.1 h1:QWJVoW5nsSAkVFALtE9J/6hV3IYnJ9a9rZt5Av/pq7Q=
+github.com/waldurbas/mysql v1.5.1/go.mod h1:GZ2QwyfUnby3jygWZFNyWOW4LFXJKEZ7GB83rpiCDIE=
 gitlab.com/nyarla/go-crypt v0.0.0-20160106005555-d9a5dc2b789b h1:7gd+rd8P3bqcn/96gOZa3F5dpJr/vEiDQYlNb/y2uNs=
 gitlab.com/nyarla/go-crypt v0.0.0-20160106005555-d9a5dc2b789b/go.mod h1:T3BPAOm2cqquPa0MKWeNkmOM5RQsRhkrwMWonFMN7fE=
