@@ -1,4 +1,4 @@
- bpackage script
+package script
 
 // ----------------------------------------------------------------------------------
 // exec.go for Go's dbx.script package
