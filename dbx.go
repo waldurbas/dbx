@@ -255,13 +255,6 @@ func (v *DB) ExecSqlx(format string, x ...interface{}) *SQLX {
 
 // ExecuteF #
 func (v *DB) ExecuteF(statement string) {
-	if v.Execute(statement) != nil {
-		v.ExitF(1)
-	}
-}
-
-// Execute #
-func (v *DB) Execute(statement string) error {
 	_, err := v.DB.Exec(statement)
 
 	if err != nil {
@@ -271,10 +264,8 @@ func (v *DB) Execute(statement string) error {
 		}
 		pfx := statement[0:le]
 		fmt.Println("error: db.Execute."+pfx, v.ErrMsg(err))
-		return err
+		v.ExitF(1)
 	}
-
-	return nil
 }
 
 // ExistTable #
