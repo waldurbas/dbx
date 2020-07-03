@@ -96,10 +96,6 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 			xdbu = ndbu*100 + nupd
 
 			if xdbu > dbs.Vinfo.Dbu {
-				err := dbs.SaveVers(xdbu)
-				if err != nil {
-					return a, err
-				}
 				dbs.Vinfo.Dbu = xdbu
 			} else if xdbu < dbs.Vinfo.Dbu {
 				return a, errors.New("Parser.LastDbu: bad value")
