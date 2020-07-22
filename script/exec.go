@@ -11,6 +11,7 @@ package script
 // ----------------------------------------------------------------------------------
 // HISTORY
 // ----------------------------------------------------------------------------------
+// 2020.07.19 TkField abfragen
 // 2020.06.06 New,VersInfo
 // 2020.05.24 init
 // ----------------------------------------------------------------------------------
@@ -164,6 +165,11 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 						ok = dbs.ExistTableCol(val)
 					} else {
 						ok = dbs.ExistTable(val)
+					}
+				case TkField:
+					ss := strings.Split(val, ".")
+					if len(ss) == 2 {
+						ok = dbs.ExistTableCol(val)
 					}
 				case TkIndex:
 					ok = dbs.ExistIndex(val)

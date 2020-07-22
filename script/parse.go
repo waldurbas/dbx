@@ -11,6 +11,7 @@ package script
 // ----------------------------------------------------------------------------------
 // HISTORY
 // ----------------------------------------------------------------------------------
+// 2020.07.19 TkField abfragen
 // 2020.05.23 init
 // ----------------------------------------------------------------------------------
 
@@ -218,6 +219,7 @@ func (x *Token) FieldIfExist() (int, bool, int, string) {
 	for _, f := range x.Fields {
 		switch f.ID {
 		case TkTable,
+			TkField,
 			TkIndex,
 			TkFunction,
 			TkTrigger,
@@ -252,6 +254,7 @@ func (x *Token) FieldIE() (int, int, string) {
 	for _, f := range x.Fields {
 		switch f.ID {
 		case TkTable,
+			TkField,
 			TkIndex,
 			TkFunction,
 			TkTrigger,

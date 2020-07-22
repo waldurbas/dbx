@@ -11,7 +11,6 @@ package dbx_test
 // ----------------------------------------------------------------------------------
 
 import (
-	"log"
 	"os"
 
 	"github.com/waldurbas/dbx"
@@ -22,7 +21,6 @@ import (
 )
 
 func TestFDB(t *testing.T) {
-
 	conStr := os.Getenv("FDB_CON")
 	if conStr == "" {
 		t.Errorf("env.variable FDB_CON not defined")
@@ -30,19 +28,12 @@ func TestFDB(t *testing.T) {
 	}
 
 	db := fdb.NewDatabase(conStr)
-	c := dbx.ConStr2DBCfg(conStr)
-
-	log.Println("fdb.connect", c)
 	if !db.Connect() {
 		t.Errorf("db.Connect fail, err: %v", db.Err)
 		return
 	}
-	defer func() {
-		log.Println("fdb.disconnect..")
-		db.Close()
-	}()
+	defer db.Close()
 
-	log.Println("check TableExists")
 	b := db.ExistTable("RDB$DATABASE")
 	if db.Err != nil || !b {
 		t.Errorf("Exist-Table fail, err: %v", db.Err)
@@ -57,7 +48,6 @@ func TestFDB(t *testing.T) {
 }
 
 func TestMYD(t *testing.T) {
-
 	conStr := os.Getenv("MYD_CON")
 	if conStr == "" {
 		t.Errorf("env.variable MYD_CON not defined")
@@ -67,18 +57,15 @@ func TestMYD(t *testing.T) {
 	c := dbx.ConStr2DBCfg(conStr)
 	db := myd.NewDatabase(*c)
 
-	log.Println("myd.connect", dbx.DBCfg2ConStr(*c))
 	if !db.Connect() {
 		t.Errorf("myd.Connect fail, err: %v", db.Err)
 		return
 	}
 	defer func() {
-		log.Println("myd.disconnect..")
 		db.Close()
 	}()
 
-	log.Println("check select count(*)")
-	n := db.ExecI("select count(*) from kunden")
+	n := db.ExecI("select count(*) from INFORMATION_SCHEMA.TABLES")
 	if db.Err != nil || n < 0 {
 		t.Errorf("select fail, err: %v", db.Err)
 		return
