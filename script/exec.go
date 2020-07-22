@@ -67,6 +67,7 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 	nupd := 0
 	xdbu := 0
 	a := 0
+	lastDBU := -dbs.Vinfo.Dbu
 
 	for _, tk := range px.Token {
 		ok := false
@@ -98,6 +99,7 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 
 			if xdbu > dbs.Vinfo.Dbu {
 				dbs.Vinfo.Dbu = xdbu
+				lastDBU = xdbu
 			} else if xdbu < dbs.Vinfo.Dbu {
 				return a, errors.New("Parser.LastDbu: bad value")
 			}
@@ -232,12 +234,13 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 		a++
 	}
 
-	if xdbu > dbs.Vinfo.Dbu {
-		err := dbs.SaveVers(xdbu)
+	if lastDBU > 0 {
+		err := dbs.SaveVers(lastDBU)
 		if err != nil {
 			return a, err
 		}
-		dbs.Vinfo.Dbu = xdbu
+	} else {
+		dbs.Vinfo.Dbu = -lastDBU
 	}
 
 	return a, nil
