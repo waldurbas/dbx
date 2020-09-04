@@ -35,6 +35,7 @@ type VersInfo struct {
 type DbScript struct {
 	Vinfo         VersInfo
 	ExecCmd       func(a int, ix int, cmd string) (bool, error)
+	ExistTrigger  func(sName string) bool
 	ExistTable    func(sName string) bool
 	ExistTableCol func(sName string) bool
 	ExistIndex    func(sName string) bool
@@ -84,6 +85,9 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 				return a, errors.New("Parser.App: wrong database")
 			}
 			continue
+
+		case TkEcho:
+			ok = true
 
 		// LASTDBU
 		case TkDbuLast:
@@ -175,6 +179,8 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 					}
 				case TkIndex:
 					ok = dbs.ExistIndex(val)
+				case TkTrigger:
+					ok = dbs.ExistTrigger(val)
 				case TkFunction:
 					ok = dbs.ExistFunc(val)
 				case TkProcedure:
@@ -203,6 +209,8 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 				}
 			case TkIndex:
 				ok = dbs.ExistIndex(val)
+			case TkTrigger:
+				ok = dbs.ExistTrigger(val)
 			case TkFunction:
 				ok = dbs.ExistFunc(val)
 			case TkProcedure:

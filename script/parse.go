@@ -93,6 +93,10 @@ func (x *Parser) load(b *[]byte) error {
 
 		if r[aix] == '$' {
 			tk, _, lk = getDollarToken(r[aix:le])
+			if tk == nil {
+				continue
+			}
+
 			if tk.ID == TkFi {
 				debug("#decode: cTok.ENDFI")
 
@@ -263,6 +267,8 @@ func (x *Token) FieldIE() (int, int, string) {
 
 		case TkOn:
 			onField++
+		case TkRecreate:
+			op = TkRecreate
 		case TkCreate:
 			op = TkCreate
 		case TkDrop:

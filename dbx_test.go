@@ -47,6 +47,71 @@ func TestFDB(t *testing.T) {
 		t.Errorf("select fail, err: %v", db.Err)
 		return
 	}
+
+	type dbu struct {
+		db       *dbx.DB
+		ExecCmd  func(a int, ix int, cmd string) (bool, error)
+		SaveVers func(v int) error
+	}
+
+	xdb := &dbu{db: db,
+		ExecCmd: func(a int, ix int, cmd string) (bool, error) {
+			if cmd == "$exit" {
+				return true, nil
+			}
+
+			_, err := db.Exec(cmd)
+
+			return false, err
+		},
+		SaveVers: func(v int) error {
+			return nil
+		},
+	}
+
+	dbs := script.NewScript()
+	dbs.ExecCmd = xdb.ExecCmd
+	dbs.ExistFunc = db.ExistFunc
+	dbs.ExistIndex = db.ExistIndex
+	dbs.ExistProc = db.ExistProc
+	dbs.ExistTrigger = db.ExistTrigger
+	dbs.ExistTable = db.ExistTable
+	dbs.ExistTableCol = db.ExistTableCol
+	dbs.SaveVers = xdb.SaveVers
+
+	// select for Version
+	sver := os.Getenv("FDB_VER")
+	if sver == "" {
+		t.Errorf("env.variable FDB_VER not defined")
+		return
+	}
+	q := db.ExecQ(sver)
+	if q.Fetch() {
+		dbs.Vinfo.Dbu = q.AsInteger(0)
+		dbs.Vinfo.App = q.AsString(1)
+		dbs.Vinfo.Chg = q.AsString(2)
+	}
+	q.Close()
+
+	// scriptname
+	scr := os.Getenv("FDB_SCR")
+	if scr == "" {
+		t.Errorf("env.variable FDB_SCR not defined")
+		return
+	}
+
+	px := script.NewParser()
+	err := px.LoadFile(scr)
+	if err != nil {
+		fmt.Printf("LoadScript, err: %v", err)
+		return
+	}
+
+	a, err := dbs.Execute(px)
+	if err != nil {
+		fmt.Printf("Execute.Script, a:%d, err: %v", a, err)
+		return
+	}
 }
 
 func TestMYD(t *testing.T) {

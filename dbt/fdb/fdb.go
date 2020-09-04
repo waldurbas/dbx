@@ -22,8 +22,10 @@ func NewDatabase(a interface{}) *dbx.DB {
 	db := dbx.NewDB("firebirdsql", a)
 
 	db.AddOp(dbx.OpExistTable, `select count(*) from RDB$RELATIONS where RDB$RELATION_NAME='%s' and RDB$VIEW_BLR is NULL`)
+	db.AddOp(dbx.OpExistTableCol, `select count(*) from RDB$RELATION_FIELDS b where b.RDB$RELATION_NAME='%s' and b.RDB$FIELD_NAME='%s'`)
 	db.AddOp(dbx.OpExistProc, `select count(*) from RDB$PROCEDURES where RDB$PROCEDURE_NAME='%s'`)
 	db.AddOp(dbx.OpExistFunc, `select count(*) from RDB$FUNCTIONS where RDB$FUNCTION_NAME='%s'`)
+	db.AddOp(dbx.OpExistTrg, `select count(*) from RDB$TRIGGERS where RDB$RELATION_NAME='%s' and RDB$TRIGGER_NAME='%s'`)
 
 	return db
 }

@@ -26,6 +26,7 @@ const (
 	TkDbuStart
 	TkDbuEnd
 	TkDbuLast
+	TkEcho
 	TkShow
 	TkNoShow
 	TkHide
@@ -105,6 +106,7 @@ var cmds = map[string]TokenID{
 	"$hide":        TkHide,
 	"$nohide":      TkNoHide,
 	"$exit":        TkExit,
+	"$echo":        TkEcho,
 	"$drop":        TkDrop,
 	"$app_version": TkAppVersion,
 	"$dbu_version": TkDbuVersion,

@@ -35,6 +35,9 @@ const OpExistFunc = "existFunc"
 // OpExistIdx #
 const OpExistIdx = "existIdx"
 
+// OpExistTrg #
+const OpExistTrg = "existTrg"
+
 // Debug #
 var Debug int
 
@@ -307,4 +310,15 @@ func (v *DB) ExistProc(sName string) bool {
 func (v *DB) ExistFunc(sName string) bool {
 	sq := v.dbOp[OpExistFunc]
 	return len(sq) > 9 && v.ExecI(sq, sName) > 0
+}
+
+// ExistTrigger #
+func (v *DB) ExistTrigger(sName string) bool {
+	sq := v.dbOp[OpExistTrg]
+	elem := strings.Split(sName, ".")
+	if len(sq) > 9 && len(elem) == 2 {
+		return v.ExecI(sq, elem[0], elem[1]) > 0
+	}
+
+	return false
 }
