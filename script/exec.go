@@ -67,6 +67,7 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 	ndbu := 0
 	nupd := 0
 	xdbu := 0
+	cmdID := 0
 	a := 0
 	lastDBU := -dbs.Vinfo.Dbu
 
@@ -185,6 +186,7 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 					ok = dbs.ExistFunc(val)
 				case TkProcedure:
 					ok = dbs.ExistProc(val)
+
 				default:
 					return a, errors.New("Parser.IF: bad object")
 				}
@@ -197,7 +199,8 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 			}
 
 		case TkOneIf, TkOneNotIf:
-			_, typ, val := tk.FieldIE()
+			ao, typ, val := tk.FieldIE()
+			cmdID = ao
 
 			switch typ {
 			case TkTable:
@@ -215,6 +218,9 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 				ok = dbs.ExistFunc(val)
 			case TkProcedure:
 				ok = dbs.ExistProc(val)
+			case TkField:
+				ok = dbs.ExistTableCol(val)
+
 			default:
 				return a, errors.New("Parser.IF: bad object")
 			}
@@ -230,7 +236,8 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 		if ok {
 			for i := 0; i < len(tk.Cmds); i++ {
 				sq := tk.GetData(i)
-				end, err := dbs.ExecCmd(a, i, sq)
+				end, err := dbs.ExecCmd(cmdID, i, sq)
+				cmdID = TkNone
 				if err != nil {
 					return a, err
 				}

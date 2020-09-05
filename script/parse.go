@@ -22,6 +22,11 @@ import (
 	"strings"
 )
 
+func debug(a ...interface{}) {
+	//	fmt.Fprint(os.Stdout, "-> ")
+	//	fmt.Fprintln(os.Stdout, a...)
+}
+
 // Parser #
 type Parser struct {
 	Token []*Token
@@ -248,6 +253,7 @@ func (x *Token) FieldIfExist() (int, bool, int, string) {
 // => $ine tkf: [{CREATE 32} {TABLE 44} {xFile 0} {( 30}]
 // => $ie  tkf: [{DROP 33} {TABLE 44} {endFile 0}]
 // => $ine tkf: [{CREATE 32} {UNIQUE 48} {INDEX 45} {ix_amFields 0} {on 47} {amFields 0} {( 30} {name 0} {) 31}]
+// => $ine tkf: [{add 35} {field 45} {A.TXT 0} {varchar 0} {( 31} {20 0} {) 32}] 1 [[add field A.TXT varchar(20)]]}
 func (x *Token) FieldIE() (int, int, string) {
 	op := TkNone
 	typ := TkNone
@@ -255,11 +261,14 @@ func (x *Token) FieldIE() (int, int, string) {
 	tbl := ""
 	onField := 0
 
-	for _, f := range x.Fields {
+	le := len(x.Fields)
+	for i := 0; i < le; i++ {
+		f := x.Fields[i]
+
 		switch f.ID {
 		case TkTable,
-			TkField,
 			TkIndex,
+			TkField,
 			TkFunction,
 			TkTrigger,
 			TkProcedure:
@@ -267,6 +276,8 @@ func (x *Token) FieldIE() (int, int, string) {
 
 		case TkOn:
 			onField++
+		case TkAdd:
+			op = TkAdd
 		case TkRecreate:
 			op = TkRecreate
 		case TkCreate:
@@ -282,6 +293,7 @@ func (x *Token) FieldIE() (int, int, string) {
 				tbl = f.Key
 			}
 		}
+		//		debug("  #FieldIE#.f", f, "s:", sval, "op:", op, "typ:", typ, "val:", val, "tbl:", tbl)
 	}
 
 	if tbl != "" {
@@ -434,7 +446,3 @@ func isWord(ch rune) bool {
 
 func isOperator(ch rune) bool { return ch == '!' || ch == '>' || ch == '<' || ch == '=' }
 func isBracket(ch rune) bool  { return ch == '(' || ch == ')' || ch == '[' || ch == ']' }
-
-func debug(a ...interface{}) {
-	//	fmt.Fprintln(os.Stdout, a...)
-}

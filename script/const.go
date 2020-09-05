@@ -31,12 +31,12 @@ const (
 	TkNoShow
 	TkHide
 	TkNoHide
-	// 11:
+	// 12:
 	TkComment
 	TkFi
 	TkSet
 
-	// 14: wichtig wegen IID < TkEOL
+	// 15: wichtig wegen IID < TkEOL
 	TkEOL
 	TkExit
 	TkEcvStart
@@ -44,7 +44,8 @@ const (
 	TkOneIf
 	TkOneNotIf
 	TkIf
-	// :21
+
+	// :22
 	TkExist
 	TkNot
 	TkNE
@@ -55,10 +56,13 @@ const (
 	TkLE
 	TkEOF
 	TkBracketOpen
-	// :31
+
+	// :32
 	TkBracketClose
 	TkCreate
 	TkDrop
+
+	// :35
 	TkAdd
 	TkSelect
 	TkUpdate
@@ -68,8 +72,9 @@ const (
 	TkPrimary
 	TkKey
 	TkDelete
-	// :41
 	TkTable
+
+	// :45
 	TkField
 	TkProcedure
 	TkIndex
