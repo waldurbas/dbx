@@ -35,6 +35,7 @@ type VersInfo struct {
 type DbScript struct {
 	Vinfo         VersInfo
 	ExecCmd       func(a int, ix int, cmd string) (bool, error)
+	ExecEcv       func(a *Lines) error
 	ExistTrigger  func(sName string) bool
 	ExistTable    func(sName string) bool
 	ExistTableCol func(sName string) bool
@@ -73,6 +74,7 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 
 	for _, tk := range px.Token {
 		ok := false
+		//		fmt.Println("token:", tk.ID, TokenAsString(int(tk.ID)))
 
 		switch tk.ID {
 		// APP_VERSION
@@ -229,6 +231,18 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 				ok = !ok
 			}
 
+		case TkEcv:
+			if dbs.ExecEcv != nil {
+				lin := tk.Cmds2Data()
+
+				err := dbs.ExecEcv(lin)
+				if err != nil {
+					return a, err
+				}
+			}
+			cmdID = TkNone
+			a += len(tk.Cmds[0]) + 2
+			continue
 		default:
 			ok = true
 		}

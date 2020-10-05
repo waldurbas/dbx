@@ -30,6 +30,11 @@ type SqxField struct {
 	Q      *SQLX
 }
 
+// IsNull #
+func (f *SqxField) IsNull() bool {
+	return f.Value == nil
+}
+
 // AsInt64 #
 func (f *SqxField) AsInt64() int64 {
 	if f.Value == nil {

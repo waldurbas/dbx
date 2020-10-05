@@ -11,6 +11,7 @@ package script
 // ----------------------------------------------------------------------------------
 // HISTORY
 // ----------------------------------------------------------------------------------
+// 2020.09.14 tokArray, func init(), Token2String
 // 2020.05.23 init
 // ----------------------------------------------------------------------------------
 
@@ -89,79 +90,111 @@ const (
 	TkModify
 	TkAlter
 	TkRename
+	TkEcv
 	TkAny
 )
 
-// Cmds #
-var cmds = map[string]TokenID{
-	"$ie":          TkOneIf,
-	"$ine":         TkOneNotIf,
-	"$if":          TkIf,
-	"$fi":          TkFi,
-	"$endif":       TkFi,
-	"$ecv_start":   TkEcvStart,
-	"$ecv_stop":    TkEcvStop,
-	"$dbu_start":   TkDbuStart,
-	"$dbu_end":     TkDbuEnd,
-	"$lastdbu":     TkDbuLast,
-	"$dbu":         TkDbu,
-	"$show":        TkShow,
-	"$noshow":      TkNoShow,
-	"$set":         TkSet,
-	"$hide":        TkHide,
-	"$nohide":      TkNoHide,
-	"$exit":        TkExit,
-	"$echo":        TkEcho,
-	"$drop":        TkDrop,
-	"$app_version": TkAppVersion,
-	"$dbu_version": TkDbuVersion,
-	"#":            TkComment,
-	"//":           TkComment,
-	"&&":           TkEOL,
-	"exist":        TkExist,
-	"recreate":     TkRecreate,
-	"field":        TkField,
-	"!":            TkNot,
-	"!=":           TkNE,
-	"=":            TkEQ,
-	">":            TkGT,
-	"<":            TkLT,
-	">=":           TkGE,
-	"<=":           TkLE,
-	")":            TkBracketClose,
-	"(":            TkBracketOpen,
+const (
+	scrTypNone = 0
+	scrTypCmd  = 1
+	scrTypSQL  = 2
+)
+
+var tokArray = []struct {
+	txt string
+	iid TokenID
+	typ int
+}{
+	{"$ie", TkOneIf, scrTypCmd},
+	{"$ine", TkOneNotIf, scrTypCmd},
+	{"$if", TkIf, scrTypCmd},
+	{"$fi", TkFi, scrTypCmd},
+	{"$endif", TkFi, scrTypCmd},
+	{"$ecv", TkEcv, scrTypNone},
+	{"$ecv_start", TkEcvStart, scrTypCmd},
+	{"$ecv_stop", TkEcvStop, scrTypCmd},
+	{"$dbu_start", TkDbuStart, scrTypCmd},
+	{"$dbu_end", TkDbuEnd, scrTypCmd},
+	{"$lastdbu", TkDbuLast, scrTypCmd},
+	{"$dbu", TkDbu, scrTypCmd},
+	{"$show", TkShow, scrTypCmd},
+	{"$noshow", TkNoShow, scrTypCmd},
+	{"$set", TkSet, scrTypCmd},
+	{"$hide", TkHide, scrTypCmd},
+	{"$nohide", TkNoHide, scrTypCmd},
+	{"$exit", TkExit, scrTypCmd},
+	{"$echo", TkEcho, scrTypCmd},
+	{"$drop", TkDrop, scrTypCmd},
+	{"$app_version", TkAppVersion, scrTypCmd},
+	{"$dbu_version", TkDbuVersion, scrTypCmd},
+	{"#", TkComment, scrTypCmd},
+	{"//", TkComment, scrTypCmd},
+	{"&&", TkEOL, scrTypCmd},
+	{"exist", TkExist, scrTypCmd},
+	{"recreate", TkRecreate, scrTypCmd},
+	{"field", TkField, scrTypCmd},
+	{"!", TkNot, scrTypCmd},
+	{"!=", TkNE, scrTypCmd},
+	{"=", TkEQ, scrTypCmd},
+	{">", TkGT, scrTypCmd},
+	{"<", TkLT, scrTypCmd},
+	{">=", TkGE, scrTypCmd},
+	{"<=", TkLE, scrTypCmd},
+	{")", TkBracketClose, scrTypCmd | scrTypSQL},
+	{"(", TkBracketOpen, scrTypCmd | scrTypSQL},
+	{"add", TkAdd, scrTypSQL},
+	{"exists", TkExist, scrTypSQL},
+	{"not", TkNot, scrTypSQL},
+	{"table", TkTable, scrTypSQL},
+	{"column", TkField, scrTypSQL},
+	{"modify", TkModify, scrTypSQL},
+	{"alter", TkAlter, scrTypSQL},
+	{"rename", TkRename, scrTypSQL},
+	{"procedure", TkProcedure, scrTypSQL},
+	{"function", TkFunction, scrTypSQL},
+	{"index", TkIndex, scrTypSQL},
+	{"trigger", TkTrigger, scrTypSQL},
+	{"on", TkOn, scrTypSQL},
+	{"to", TkTo, scrTypSQL},
+	{"first", TkFirst, scrTypSQL},
+	{"after", TkAfter, scrTypSQL},
+	{"create", TkCreate, scrTypSQL},
+	{"drop", TkDrop, scrTypSQL},
+	{"select", TkSelect, scrTypSQL},
+	{"update", TkUpdate, scrTypSQL},
+	{"delete", TkDelete, scrTypSQL},
+	{"ascending", TkAscending, scrTypSQL},
+	{"descending", TkDescending, scrTypSQL},
+	{"primary", TkPrimary, scrTypSQL},
+	{"foreign", TkForeign, scrTypSQL},
+	{"unique", TkUnique, scrTypSQL},
+	{"key", TkKey, scrTypSQL},
+	{"if", TkIf, scrTypSQL},
+	{"#any", TkAny, scrTypNone},
 }
 
-// Sqls #
-var sqls = map[string]TokenID{
-	"add":        TkAdd,
-	"exists":     TkExist,
-	"not":        TkNot,
-	"table":      TkTable,
-	"column":     TkField,
-	"modify":     TkModify,
-	"alter":      TkAlter,
-	"rename":     TkRename,
-	"procedure":  TkProcedure,
-	"function":   TkFunction,
-	"index":      TkIndex,
-	"trigger":    TkTrigger,
-	"on":         TkOn,
-	"to":         TkTo,
-	"first":      TkFirst,
-	"after":      TkAfter,
-	"create":     TkCreate,
-	"drop":       TkDrop,
-	"select":     TkSelect,
-	"update":     TkUpdate,
-	"delete":     TkDelete,
-	"ascending":  TkAscending,
-	"descending": TkDescending,
-	"primary":    TkPrimary,
-	"foreign":    TkForeign,
-	"unique":     TkUnique,
-	"key":        TkKey,
-	"if":         TkIf,
-	")":          TkBracketClose,
-	"(":          TkBracketOpen,
+var sqls = make(map[string]TokenID)
+var cmds = make(map[string]TokenID)
+
+func init() {
+	for _, e := range tokArray {
+		if (e.typ & scrTypCmd) > 0 {
+			cmds[e.txt] = TokenID(e.iid)
+		}
+
+		if (e.typ & scrTypSQL) > 0 {
+			cmds[e.txt] = TokenID(e.iid)
+		}
+	}
+}
+
+// Token2String #
+func Token2String(itok int) string {
+	for _, e := range tokArray {
+		if int(e.iid) == itok {
+			return e.txt
+		}
+	}
+
+	return "none"
 }

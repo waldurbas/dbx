@@ -448,6 +448,11 @@ func (q *SQLX) PrintTo(w io.Writer, frm string) (err error) {
 	return nil
 }
 
+// IsNull (columnIdx)
+func (q *SQLX) IsNull(ix int) bool {
+	return q.Fields[ix].IsNull()
+}
+
 // AsString (columnIdx)
 func (q *SQLX) AsString(ix int) string {
 	return q.Fields[ix].AsString()

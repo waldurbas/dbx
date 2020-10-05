@@ -41,6 +41,14 @@ type Token struct {
 	Cmds       []([]string)
 }
 
+// Lines #
+type Lines struct {
+	tok   *Token
+	Idx   int
+	Count int
+	Data  []*string
+}
+
 // Field #
 type Field struct {
 	Key string
@@ -109,6 +117,13 @@ func (x *Parser) load(b *[]byte) error {
 				continue
 			}
 
+			if tk.ID == TkEcvStart {
+				cTok = &Token{TkEcv, "ecv", []Field{}, 0, []([]string){}}
+				x.Token = append(x.Token, cTok)
+				cTok.nextCmdIdx = 0
+				continue
+			}
+
 			if tk.ID == TkEcvStop {
 				debug("#decode: cTok.ENDECV")
 				cTok = nil
@@ -133,7 +148,7 @@ func (x *Parser) load(b *[]byte) error {
 			}
 			debug("#decode #", len(x.Token), "T=[", string(r[aix:le]), "]: cTok.ID=", cTok.ID, "tk.ID=", tk.ID, "eol=", eol)
 
-			if tk.ID == TkIf || tk.ID == TkEcvStart {
+			if tk.ID == TkIf {
 				continue
 			}
 
@@ -166,7 +181,6 @@ func (x *Parser) load(b *[]byte) error {
 				debug("#decode: cTok.ENDX")
 				cTok = nil
 			}
-			//}
 		} else {
 			cTok.Add(string(r[:le]))
 		}
@@ -199,6 +213,20 @@ func (x *Token) GetData(ix int) string {
 	}
 
 	return ss
+}
+
+// Cmds2Data #
+func (x *Token) Cmds2Data() *Lines {
+	d := &Lines{tok: x}
+
+	for ix := 0; ix < len(d.tok.Cmds); ix++ {
+		for li := 0; li < len(d.tok.Cmds[ix]); li++ {
+			d.Data = append(d.Data, &d.tok.Cmds[ix][li])
+			d.Count++
+		}
+	}
+
+	return d
 }
 
 // FieldKeyVal #
@@ -282,6 +310,8 @@ func (x *Token) FieldIE() (int, int, string) {
 			op = TkRecreate
 		case TkCreate:
 			op = TkCreate
+		case TkDelete:
+			op = TkDelete
 		case TkDrop:
 			op = TkDrop
 		case TkNone:
@@ -301,6 +331,17 @@ func (x *Token) FieldIE() (int, int, string) {
 	}
 
 	return op, typ, val
+}
+
+// Get #------------- Lines --------
+func (l *Lines) Get(s *string) bool {
+	if l.Idx >= l.Count {
+		return false
+	}
+
+	*s = *l.Data[l.Idx]
+	l.Idx++
+	return true
 }
 
 func getDollarToken(s []rune) (*Token, bool, string) {
