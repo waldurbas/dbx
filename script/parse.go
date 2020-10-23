@@ -22,11 +22,6 @@ import (
 	"strings"
 )
 
-func debug(a ...interface{}) {
-	//	fmt.Fprint(os.Stdout, "-> ")
-	//	fmt.Fprintln(os.Stdout, a...)
-}
-
 // Parser #
 type Parser struct {
 	Token []*Token

@@ -176,6 +176,11 @@ var tokArray = []struct {
 var sqls = make(map[string]TokenID)
 var cmds = make(map[string]TokenID)
 
+func debug(a ...interface{}) {
+	//	fmt.Fprint(os.Stdout, "-> ")
+	// fmt.Fprintln(os.Stdout, a...)
+}
+
 func init() {
 	for _, e := range tokArray {
 		if (e.typ & scrTypCmd) > 0 {

@@ -74,7 +74,7 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 
 	for _, tk := range px.Token {
 		ok := false
-		//		fmt.Println("token:", tk.ID, TokenAsString(int(tk.ID)))
+		debug("token:", tk.ID, Token2String(int(tk.ID)))
 
 		switch tk.ID {
 		// APP_VERSION
@@ -89,7 +89,16 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 			}
 			continue
 
+		case TkExit:
+			cmdID = TkExit
+			ok = true
+
 		case TkEcho:
+			cmdID = TkEcho
+			ok = true
+
+		case TkSet:
+			cmdID = TkSet
 			ok = true
 
 		// LASTDBU
@@ -256,8 +265,13 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 					return a, err
 				}
 				if end {
+					ok = false
 					break
 				}
+			}
+
+			if !ok {
+				break
 			}
 		}
 		a++
