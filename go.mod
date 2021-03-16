@@ -1,6 +1,6 @@
 module github.com/waldurbas/dbx
 
-go 1.13
+go 1.16
 
 require (
 	github.com/cznic/mathutil v0.0.0-20181122101859-297441e03548 // indirect
