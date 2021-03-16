@@ -2,7 +2,7 @@ package dbx
 
 // ----------------------------------------------------------------------------------
 // dbx.go for Go's dbx package
-// Copyright 2019,2020 by Waldemar Urbas
+// Copyright 2019,2021 by Waldemar Urbas
 //-----------------------------------------------------------------------------------
 // This Source Code Form is subject to the terms of the 'MIT License'
 // A short and simple permissive license with conditions only requiring
