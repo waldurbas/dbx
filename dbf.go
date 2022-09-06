@@ -204,6 +204,7 @@ func prepareStringField(s string) string {
 		}
 	}
 	rr[n] = rune('"')
+	n++
 
 	return string(rr[:n])
 }
