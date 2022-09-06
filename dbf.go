@@ -151,9 +151,23 @@ func (f *SqxField) FormattedValue() string {
 	}
 }
 
-func (f *SqxField) CleanedString() string {
+func (f *SqxField) CleanedString(withNIL bool) string {
 	if f.IsNull() {
-		return "NIL"
+		if withNIL {
+			return "NIL"
+		}
+
+		switch f.Typ {
+		case "DATETIME", "TIMESTAMP":
+			return `"01-01-2000 00:00:00"`
+		case "DATE":
+			return `"01-01-2000"`
+		case "SHORT", "INT", "MEDIUMINT", "TINYINT", "BIGINT":
+			return `0`
+		}
+
+		return `""`
+
 	} else {
 		switch f.Typ {
 		case "SHORT", "INT", "MEDIUMINT", "TINYINT", "BIGINT":
