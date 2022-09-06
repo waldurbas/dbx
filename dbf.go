@@ -69,13 +69,20 @@ func (f *SqxField) AsString() string {
 		return "NULL"
 	}
 
-	if f.Typ == "TIMESTAMP" {
+	switch f.Typ {
+	case "TIMESTAMP", "DATETIME":
 		s := string(f.Value)
 		s = strings.ReplaceAll(s, "T", " ")
 		if len(s) > 19 {
 			s = s[:19]
 		}
 
+		return s
+	case "DATE":
+		s := string(f.Value)
+		if len(s) > 10 {
+			s = s[:10]
+		}
 		return s
 	}
 
@@ -99,10 +106,27 @@ func (f *SqxField) AsDateTime() *time.Time {
 	return &t
 }
 
+// AsDate #
+func (f *SqxField) AsDate() *time.Time {
+	if f.Value == nil {
+		return nil
+	}
+
+	s := string(f.Value)
+	s = strings.ReplaceAll(s, "T", " ")
+	if len(s) > 10 {
+		s = s[:10]
+	}
+	layout := "2006-01-02"
+	t, _ := time.Parse(layout, s)
+
+	return &t
+}
+
 // FormattedTitle Value As Formatted String
 func (f *SqxField) FormattedTitle() string {
 	switch f.Typ {
-	case "SHORT", "INT", "MEDIUMINT", "TINYINT":
+	case "SHORT", "INT", "MEDIUMINT", "TINYINT", "BIGINT":
 		return fmt.Sprintf("%*.*s", f.OutLen, f.OutLen, f.Name)
 	default:
 		if f.OutLen > 0 && f.Idx < (f.Q.ColNum-1) {
@@ -116,7 +140,7 @@ func (f *SqxField) FormattedTitle() string {
 // FormattedValue Value As Formatted String
 func (f *SqxField) FormattedValue() string {
 	switch f.Typ {
-	case "SHORT", "INT", "MEDIUMINT", "TINYINT":
+	case "SHORT", "INT", "MEDIUMINT", "TINYINT", "BIGINT":
 		return fmt.Sprintf("%*.*s", f.OutLen, f.OutLen, f.AsString())
 	default:
 		if f.OutLen > 0 && f.Idx < (f.Q.ColNum-1) {
@@ -127,7 +151,60 @@ func (f *SqxField) FormattedValue() string {
 	}
 }
 
+func (f *SqxField) CleanedString() string {
+	if f.IsNull() {
+		return "NIL"
+	} else {
+		switch f.Typ {
+		case "SHORT", "INT", "MEDIUMINT", "TINYINT", "BIGINT":
+			return prepareIntField(f.AsString())
+		}
+	}
+	return prepareStringField(f.AsString())
+}
+
 // PrintOut Formatted Value auf stdout
 func (f *SqxField) PrintOut() {
 	fmt.Print(f.FormattedValue(), " ")
+}
+
+func prepareStringField(s string) string {
+	rr := make([]rune, len(s)+2)
+
+	rr[0] = rune('"')
+	n := 1
+	for _, c := range s {
+		r := rune(c)
+		switch r {
+		case '\n':
+			rr[n] = '/'
+			n++
+		case '\r':
+		case '^':
+		case '"':
+			rr[n] = '\''
+			n++
+		default:
+			rr[n] = r
+			n++
+		}
+	}
+	rr[n] = rune('"')
+
+	return string(rr[:n])
+}
+
+func prepareIntField(s string) string {
+	rr := make([]rune, len(s))
+
+	n := 0
+	for _, c := range s {
+		r := rune(c)
+		if r >= '0' && r <= '9' {
+			rr[n] = r
+			n++
+		}
+	}
+
+	return string(rr[:n])
 }

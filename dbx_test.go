@@ -167,6 +167,8 @@ func TestMYD(t *testing.T) {
 	}
 
 	c := dbx.ConStr2DBCfg(conStr)
+	c.Print()
+
 	db := myd.NewDatabase(*c)
 
 	if !db.Connect() {
@@ -212,6 +214,20 @@ func TestMYD(t *testing.T) {
 	dbs.ExistTable = db.ExistTable
 	dbs.ExistTableCol = db.ExistTableCol
 	dbs.SaveVers = xdb.SaveVers
+
+	sql := os.Getenv("MYD_SQL")
+	if len(sql) > 0 {
+		if strings.Index(sql, "call ") == 0 {
+			qf := db.Call(db, sql)
+			if qf != nil {
+
+				fmt.Print(qf.ShowLine(true))
+				fmt.Print(qf.ShowLine(false))
+			}
+			qf.Close()
+
+		}
+	}
 
 	sver := os.Getenv("MYD_VER")
 	if sver == "" {

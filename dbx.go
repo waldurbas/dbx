@@ -59,6 +59,7 @@ type DB struct {
 	Err     error
 	dbOp    map[string]string
 	ExitF   func(int)
+	Call    func(*DB, string) *SQLX
 }
 
 // DBCfg2ConStr #

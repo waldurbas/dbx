@@ -161,6 +161,14 @@ func (q *SQLX) execSelect(sq string) bool {
 			fallthrough
 		case "INT":
 			f.OutLen = 11
+		case "DATE":
+			f.OutLen = 10
+		case "INT64":
+			f.Typ = "BIGINT"
+			fallthrough
+		case "BIGINT":
+			f.OutLen = 17
+
 		case "DATETIME":
 			f.Typ = "TIMESTAMP"
 			fallthrough
@@ -270,8 +278,12 @@ func (q *SQLX) ShowLineAsEcv(isTitle bool) string {
 				s = s + "[short]"
 			case "INT", "LONG":
 				s = s + "[int]"
+			case "BIGINT", "INT64":
+				s = s + "[bigint]"
 			case "TIMESTAMP", "DATETIME":
 				s = s + "[timestamp]"
+			case "DATE":
+				s = s + "[date]"
 			case "TEXT":
 				if f.Len > 0 {
 					s = s + "[char_" + strconv.Itoa(f.Len) + "]"
@@ -345,6 +357,9 @@ func (q *SQLX) AsJSON() ([]byte, error) {
 		for i, f := range q.Fields {
 			v := reflect.New(f.rTyp).Interface()
 			switch v.(type) {
+			case *int64:
+				ii := f.AsInt64()
+				object[f.Name] = ii
 			case *int32, *int16:
 				ii := f.AsInteger()
 				object[f.Name] = ii
