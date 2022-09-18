@@ -492,3 +492,25 @@ func (q *SQLX) Value(ix int) []byte {
 func (q *SQLX) AsDateTime(ix int) *time.Time {
 	return q.Fields[ix].AsDateTime()
 }
+
+func (q *SQLX) ByName(fn string) *SqxField {
+	fnl := strings.ToLower(fn)
+	for _, f := range q.Fields {
+		if strings.ToLower(f.Name) == fnl {
+			return &f
+		}
+	}
+
+	return nil
+}
+
+func (q *SQLX) IndexOf(fn string) int {
+	fnl := strings.ToLower(fn)
+	for i, f := range q.Fields {
+		if strings.ToLower(f.Name) == fnl {
+			return i
+		}
+	}
+
+	return -1
+}
