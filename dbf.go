@@ -9,6 +9,8 @@ package dbx
 // preservation of copyright and license notices. Licensed works, modifications,
 // and larger works may be distributed under different terms and without source code.
 // ----------------------------------------------------------------------------------
+// 2022.12.07 (wu) bugfix "-" in prepareIntField
+// ----------------------------------------------------------------------------------
 
 import (
 	"fmt"
@@ -213,9 +215,12 @@ func prepareIntField(s string) string {
 	rr := make([]rune, len(s))
 
 	n := 0
-	for _, c := range s {
+	for i, c := range s {
 		r := rune(c)
 		if r >= '0' && r <= '9' {
+			rr[n] = r
+			n++
+		} else if i == 0 && r == '-' {
 			rr[n] = r
 			n++
 		}
