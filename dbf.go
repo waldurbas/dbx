@@ -212,19 +212,20 @@ func prepareStringField(s string) string {
 }
 
 func prepareIntField(s string) string {
-	rr := make([]rune, len(s))
+	rr := make([]rune, len(s)+1)
 
-	n := 0
-	for i, c := range s {
+	ax := 1
+	rr[0] = '-'
+
+	n := 1
+	for _, c := range s {
 		r := rune(c)
 		if r >= '0' && r <= '9' {
 			rr[n] = r
 			n++
-		} else if i == 0 && r == '-' {
-			rr[n] = r
-			n++
+		} else if r == '-' {
+			ax = 0
 		}
 	}
-
-	return string(rr[:n])
+	return string(rr[ax:n])
 }

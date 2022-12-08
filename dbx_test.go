@@ -26,7 +26,8 @@ import (
 func TestFDB(t *testing.T) {
 	conStr := os.Getenv("FDB_CON")
 	if conStr == "" {
-		t.Errorf("env.variable FDB_CON not defined")
+		//		t.Errorf("env.variable FDB_CON not defined")
+		fmt.Printf("\nenv.variable FDB_CON not defined")
 		return
 	}
 
@@ -162,7 +163,7 @@ func TestFDB(t *testing.T) {
 func TestMYD(t *testing.T) {
 	conStr := os.Getenv("MYD_CON")
 	if conStr == "" {
-		fmt.Println("\n\nenv.variable MYD_CON not defined")
+		fmt.Println("\nenv.variable MYD_CON not defined")
 		return
 	}
 
@@ -259,5 +260,29 @@ func TestMYD(t *testing.T) {
 	if err != nil {
 		fmt.Printf("Execute.Script, a:%d, err: %v", a, err)
 		return
+	}
+}
+
+func TestFunc(t *testing.T) {
+	var ar = []struct {
+		vs string
+		vi string
+	}{
+		{"-20", "-20"},
+		{"  0- 20  ", "-020"},
+		{" + 25  ", "25"},
+		{"-  40  ", "-40"},
+		{"  30-  ", "-30"},
+	}
+
+	f := dbx.SqxField{Typ: "INT"}
+
+	for _, a := range ar {
+		f.Value = []byte(a.vs)
+		s := f.CleanedString(false)
+
+		if a.vi != s {
+			t.Errorf("CleanString('%s'): soll '%s', ist '%s'", a.vs, a.vi, s)
+		}
 	}
 }
