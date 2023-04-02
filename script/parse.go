@@ -348,14 +348,13 @@ func (l *Lines) Get(s *string) bool {
 }
 
 func getDollarToken(s []rune) (*Token, bool, string) {
-	fi := splitLine(s)
+	fi := SplitLine(s)
 	if len(fi) < 1 {
 		return nil, false, ""
 	}
 
 	k := strings.ToLower(fi[0])
 	if k[0] == '$' {
-
 		if c, ok := cmds[k]; ok {
 			tok := &Token{c, k, []Field{}, 0, []([]string){}}
 			for _, w := range fi[1:] {
@@ -381,7 +380,7 @@ func getDollarToken(s []rune) (*Token, bool, string) {
 	return nil, true, k
 }
 
-func splitLine(rs []rune) []string {
+func SplitLine(rs []rune) []string {
 	type span struct {
 		start int
 		end   int
@@ -397,8 +396,18 @@ func splitLine(rs []rune) []string {
 		fromIndex = i
 
 		// check word
-		for i < le && isWord(rs[i]) {
+		if isApostroph(rs[i]) {
 			i++
+			for i < le && !isApostroph(rs[i]) {
+				i++
+			}
+			if isApostroph(rs[i]) {
+				i++
+			}
+		} else {
+			for i < le && isWord(rs[i]) {
+				i++
+			}
 		}
 
 		if fromIndex != i {
@@ -483,7 +492,7 @@ func getNextWordIdx(i *int, r *[]rune, le int) {
 func isWhitespace(ch rune) bool { return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' }
 func isLetter(ch rune) bool     { return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') }
 func isDigit(ch rune) bool      { return (ch >= '0' && ch <= '9') }
-
+func isApostroph(ch rune) bool  { return ch == '\'' }
 func isWord(ch rune) bool {
 	return ch == '.' || ch == '$' || ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')
 }

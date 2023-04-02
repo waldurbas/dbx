@@ -23,6 +23,14 @@ import (
 	"testing"
 )
 
+func TestSplit(*testing.T) {
+	s := "create exception DEVI_MISSING 'entry in table DEVI is missing'"
+	ss := script.SplitLine([]rune(s))
+	for i, s := range ss {
+		fmt.Printf("%d: [%s]\n", i, s)
+	}
+}
+
 func TestFDB(t *testing.T) {
 	conStr := os.Getenv("FDB_CON")
 	if conStr == "" {
