@@ -1,10 +1,5 @@
 package script
 
-import (
-	"fmt"
-	"os"
-)
-
 // ----------------------------------------------------------------------------------
 // const.go for Go's dbx.script package
 // Copyright 2020 by Waldemar Urbas
@@ -187,8 +182,8 @@ var sqls = make(map[string]TokenID)
 var cmds = make(map[string]TokenID)
 
 func debug(a ...interface{}) {
-	fmt.Fprint(os.Stdout, "-> ")
-	fmt.Fprintln(os.Stdout, a...)
+	// fmt.Fprint(os.Stdout, "-> ")
+	// fmt.Fprintln(os.Stdout, a...)
 }
 
 func init() {
