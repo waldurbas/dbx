@@ -2,7 +2,7 @@ package script
 
 // ----------------------------------------------------------------------------------
 // exec.go for Go's dbx.script package
-// Copyright 2020 by Waldemar Urbas
+// Copyright 2020,2023 by Waldemar Urbas
 //-----------------------------------------------------------------------------------
 // This Source Code Form is subject to the terms of the 'MIT License'
 // A short and simple permissive license with conditions only requiring
@@ -11,6 +11,7 @@ package script
 // ----------------------------------------------------------------------------------
 // HISTORY
 // ----------------------------------------------------------------------------------
+// 2023.04.02 ExistDom,ExistExc
 // 2020.07.19 TkField abfragen
 // 2020.06.06 New,VersInfo
 // 2020.05.24 init
@@ -33,16 +34,18 @@ type VersInfo struct {
 
 // DbScript #
 type DbScript struct {
-	Vinfo         VersInfo
-	ExecCmd       func(a int, ix int, cmd string) (bool, error)
-	ExecEcv       func(a *Lines) error
-	ExistTrigger  func(sName string) bool
-	ExistTable    func(sName string) bool
-	ExistTableCol func(sName string) bool
-	ExistIndex    func(sName string) bool
-	ExistProc     func(sName string) bool
-	ExistFunc     func(sName string) bool
-	SaveVers      func(v int) error
+	Vinfo          VersInfo
+	ExecCmd        func(a int, ix int, cmd string) (bool, error)
+	ExecEcv        func(a *Lines) error
+	ExistTrigger   func(sName string) bool
+	ExistTable     func(sName string) bool
+	ExistTableCol  func(sName string) bool
+	ExistIndex     func(sName string) bool
+	ExistProc      func(sName string) bool
+	ExistFunc      func(sName string) bool
+	ExistDomain    func(sName string) bool
+	ExistException func(sName string) bool
+	SaveVers       func(v int) error
 }
 
 // NewScript #
@@ -197,6 +200,10 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 					ok = dbs.ExistFunc(val)
 				case TkProcedure:
 					ok = dbs.ExistProc(val)
+				case TkException:
+					ok = dbs.ExistException(val)
+				case TkDomain:
+					ok = dbs.ExistDomain(val)
 
 				default:
 					return a, errors.New("Parser.IF: bad object")
@@ -231,6 +238,10 @@ func (dbs *DbScript) Execute(px *Parser) (int, error) {
 				ok = dbs.ExistProc(val)
 			case TkField:
 				ok = dbs.ExistTableCol(val)
+			case TkException:
+				ok = dbs.ExistException(val)
+			case TkDomain:
+				ok = dbs.ExistDomain(val)
 
 			default:
 				return a, errors.New("Parser.IF: bad object")

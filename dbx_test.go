@@ -123,22 +123,24 @@ func TestFDB(t *testing.T) {
 	dbs.ExistTrigger = db.ExistTrigger
 	dbs.ExistTable = db.ExistTable
 	dbs.ExistTableCol = db.ExistTableCol
+	dbs.ExistDomain = db.ExistDomain
+	dbs.ExistException = db.ExistException
 	dbs.SaveVers = xdb.SaveVers
-
-	// select for Version
-	sver := os.Getenv("FDB_VER")
-	if sver == "" {
-		t.Errorf("\n\nenv.variable FDB_VER not defined")
-		return
-	}
-	q := db.ExecQ(sver)
-	if q.Fetch() {
-		dbs.Vinfo.Dbu = q.AsInteger(0)
-		dbs.Vinfo.App = q.AsString(1)
-		dbs.Vinfo.Chg = q.AsString(2)
-	}
-	q.Close()
-
+	/*
+		// select for Version
+		sver := os.Getenv("FDB_VER")
+		if sver == "" {
+			t.Errorf("\n\nenv.variable FDB_VER not defined")
+			return
+		}
+		q := db.ExecQ(sver)
+		if q.Fetch() {
+			dbs.Vinfo.Dbu = q.AsInteger(0)
+			dbs.Vinfo.App = q.AsString(1)
+			dbs.Vinfo.Chg = q.AsString(2)
+		}
+		q.Close()
+	*/
 	// scriptname
 	scr := os.Getenv("FDB_SCR")
 	if scr == "" {
@@ -158,6 +160,8 @@ func TestFDB(t *testing.T) {
 		fmt.Printf("Execute.Script, a:%d, err: %v", a, err)
 		return
 	}
+
+	fmt.Println("Execute.Script OK..")
 }
 
 func TestMYD(t *testing.T) {

@@ -147,6 +147,10 @@ func (x *Parser) load(b *[]byte) error {
 				continue
 			}
 
+			//			if tk.ID == TkExit {
+			//				break
+			//			}
+
 			if tk.ID == TkOneIf || tk.ID == TkOneNotIf {
 				aixo := aix
 				getNextWordIdx(&aix, &r, le)
@@ -255,7 +259,9 @@ func (x *Token) FieldIfExist() (int, bool, int, string) {
 			TkIndex,
 			TkFunction,
 			TkTrigger,
-			TkProcedure:
+			TkProcedure,
+			TkException,
+			TkDomain:
 			typ = int(f.ID)
 
 		case TkNot:
@@ -294,7 +300,9 @@ func (x *Token) FieldIE() (int, int, string) {
 			TkField,
 			TkFunction,
 			TkTrigger,
-			TkProcedure:
+			TkProcedure,
+			TkException,
+			TkDomain:
 			typ = int(f.ID)
 
 		case TkOn:

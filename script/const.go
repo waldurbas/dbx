@@ -1,5 +1,10 @@
 package script
 
+import (
+	"fmt"
+	"os"
+)
+
 // ----------------------------------------------------------------------------------
 // const.go for Go's dbx.script package
 // Copyright 2020 by Waldemar Urbas
@@ -11,6 +16,7 @@ package script
 // ----------------------------------------------------------------------------------
 // HISTORY
 // ----------------------------------------------------------------------------------
+// 2023.04.02 TkException,TkDomain
 // 2020.09.14 tokArray, func init(), Token2String
 // 2020.05.23 init
 // ----------------------------------------------------------------------------------
@@ -90,6 +96,8 @@ const (
 	TkModify
 	TkAlter
 	TkRename
+	TkException
+	TkDomain
 	TkEcv
 	TkAny
 )
@@ -154,6 +162,8 @@ var tokArray = []struct {
 	{"function", TkFunction, scrTypSQL},
 	{"index", TkIndex, scrTypSQL},
 	{"trigger", TkTrigger, scrTypSQL},
+	{"exception", TkException, scrTypSQL},
+	{"domain", TkDomain, scrTypSQL},
 	{"on", TkOn, scrTypSQL},
 	{"to", TkTo, scrTypSQL},
 	{"first", TkFirst, scrTypSQL},
@@ -177,8 +187,8 @@ var sqls = make(map[string]TokenID)
 var cmds = make(map[string]TokenID)
 
 func debug(a ...interface{}) {
-	//	fmt.Fprint(os.Stdout, "-> ")
-	// fmt.Fprintln(os.Stdout, a...)
+	fmt.Fprint(os.Stdout, "-> ")
+	fmt.Fprintln(os.Stdout, a...)
 }
 
 func init() {

@@ -2,12 +2,14 @@ package dbx
 
 // ----------------------------------------------------------------------------------
 // dbx.go for Go's dbx package
-// Copyright 2019,2021 by Waldemar Urbas
+// Copyright 2019,2023 by Waldemar Urbas
 //-----------------------------------------------------------------------------------
 // This Source Code Form is subject to the terms of the 'MIT License'
 // A short and simple permissive license with conditions only requiring
 // preservation of copyright and license notices. Licensed works, modifications,
 // and larger works may be distributed under different terms and without source code.
+// ----------------------------------------------------------------------------------
+// 2023.04.02 ExistDomain,ExistException
 // ----------------------------------------------------------------------------------
 
 import (
@@ -21,10 +23,10 @@ import (
 )
 
 // OpExistTable #
-const OpExistTable string = "existTable"
+const OpExistTable = "existTable"
 
 // OpExistTableCol #
-const OpExistTableCol string = "existTableCol"
+const OpExistTableCol = "existTableCol"
 
 // OpExistProc #
 const OpExistProc = "existProc"
@@ -37,6 +39,12 @@ const OpExistIdx = "existIdx"
 
 // OpExistTrg #
 const OpExistTrg = "existTrg"
+
+// OpExistExc #
+const OpExistExc = "existExc"
+
+// OpExistDom #
+const OpExistDom = "existDom"
 
 // Debug #
 var Debug int
@@ -185,7 +193,7 @@ func (v *DB) prepareSqText(format string, x ...interface{}) string {
 	return fmt.Sprintf(format, x...)
 }
 
-//ExecI64 # asInteger
+// ExecI64 # asInteger
 func (v *DB) ExecI64(format string, x ...interface{}) int64 {
 	sq := v.prepareSqText(format, x...)
 	r := v.QueryRow(sq)
@@ -322,4 +330,16 @@ func (v *DB) ExistTrigger(sName string) bool {
 	}
 
 	return false
+}
+
+// ExistDom #
+func (v *DB) ExistDomain(sName string) bool {
+	sq := v.dbOp[OpExistDom]
+	return len(sq) > 9 && v.ExecI(sq, sName) > 0
+}
+
+// ExistDom #
+func (v *DB) ExistException(sName string) bool {
+	sq := v.dbOp[OpExistExc]
+	return len(sq) > 9 && v.ExecI(sq, sName) > 0
 }
