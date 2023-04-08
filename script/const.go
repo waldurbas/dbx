@@ -93,6 +93,8 @@ const (
 	TkRename
 	TkException
 	TkDomain
+	TkGlobal
+	TkTemporary
 	TkEcv
 	TkAny
 )
@@ -168,6 +170,8 @@ var tokArray = []struct {
 	{"select", TkSelect, scrTypSQL},
 	{"update", TkUpdate, scrTypSQL},
 	{"delete", TkDelete, scrTypSQL},
+	{"global", TkGlobal, scrTypSQL},
+	{"temporary", TkTemporary, scrTypSQL},
 	{"ascending", TkAscending, scrTypSQL},
 	{"descending", TkDescending, scrTypSQL},
 	{"primary", TkPrimary, scrTypSQL},

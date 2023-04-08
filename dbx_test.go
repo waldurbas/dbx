@@ -149,6 +149,7 @@ func TestFDB(t *testing.T) {
 		}
 		q.Close()
 	*/
+
 	// scriptname
 	scr := os.Getenv("FDB_SCR")
 	if scr == "" {

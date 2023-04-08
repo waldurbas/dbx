@@ -295,6 +295,9 @@ func (x *Token) FieldIE() (int, int, string) {
 		f := x.Fields[i]
 
 		switch f.ID {
+		case TkGlobal,
+			TkTemporary:
+			tbl = ""
 		case TkTable,
 			TkIndex,
 			TkField,
@@ -437,7 +440,7 @@ func SplitLine(rs []rune) []string {
 			if fromIndex != i {
 				ok = true
 				spans = append(spans, span{fromIndex, i})
-				fromIndex = i
+				//fromIndex = i
 			}
 		}
 
@@ -454,6 +457,7 @@ func SplitLine(rs []rune) []string {
 	return a
 }
 
+/*
 func hasPrefix(s *string, le int, pfx string) bool {
 	lx := len(pfx)
 	return le >= lx && (*s)[0:lx] == pfx
@@ -463,6 +467,7 @@ func hasSuffix(s *string, le int, sfx string) bool {
 	lx := len(sfx)
 	return le >= lx && (*s)[le-lx:] == sfx
 }
+*/
 
 func skipLeft(i *int, r *[]rune, le int) bool {
 	for *i < le && isWhitespace((*r)[*i]) {
@@ -489,9 +494,10 @@ func getNextWordIdx(i *int, r *[]rune, le int) {
 	skipLeft(i, r, le)
 }
 
+//func isLetter(ch rune) bool { return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') }
+//func isDigit(ch rune) bool  { return (ch >= '0' && ch <= '9') }
+
 func isWhitespace(ch rune) bool { return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' }
-func isLetter(ch rune) bool     { return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') }
-func isDigit(ch rune) bool      { return (ch >= '0' && ch <= '9') }
 func isApostroph(ch rune) bool  { return ch == '\'' }
 func isWord(ch rune) bool {
 	return ch == '.' || ch == '$' || ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')
